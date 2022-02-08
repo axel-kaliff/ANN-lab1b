@@ -1,0 +1,101 @@
+%generate data
+x=[-5:0.5:5]';
+y=[-5:0.5:5]'
+z=exp(-x.*x*0.1) * exp(-y.*y*0.1)' - 0.5;
+
+
+
+%[lowestMSE, w,v, m] = trainFunction(x, y, z, 1000, 0.001, 0.9, 1:4:10);
+%drawnow;
+
+disp(size(x));
+disp(size(y));
+disp(size(z));
+
+x = sort(subsample(0.8, x'));
+x = x(1,:);
+subclass = sort(x, 1);
+x = x';
+y = x
+z = exp(-x.*x*0.1) * exp(-y.*y*0.1)' - 0.5;
+
+disp(size(x));
+disp(size(y));
+disp(size(z));
+
+[lowestMSE, w,v, m] = trainFunction(x, y, z, 1000, 0.001, 0.9, 1:4:10);
+drawnow;
+
+%{
+
+%disp(lowestMSE);
+
+% 'best' model
+trainingRatio = 0.8;
+
+mesh(x, y, z);
+[x_len, ~]= size(x);
+[y_len, ~]= size(y);
+ndata = x_len*y_len;
+
+targets = reshape (z, 1, ndata);
+[xx, yy] = meshgrid (x, y);
+patterns = [reshape(xx, 1, ndata); reshape(yy, 1, ndata)];
+pt = [patterns;targets];
+
+[~, lenA] = size(pt);
+
+randomA = pt(:, randperm(size(pt, 2))); 
+for i=1:lenA
+    if i <= lenA * trainingRatio
+        trainingSet(:, i) = randomA(:, i);
+    else 
+        verifySet(:, i) = randomA(:,i);
+    end
+end
+
+[w,v, MSE, out] = backprop(trainingSet(1:2,:), trainingSet(3,:), eta, epoch,23, 2, alpha);
+figure(1);
+figure('color','w');
+
+
+
+    [~,gridsize] = size(trainingSet)
+
+    zz = reshape(out, gridsize, gridsize);
+    mesh(x,y,zz);
+    axis([-5 5 -5 5 -0.7 0.7]);
+    rubrik = sprintf('Hidden nodes: %d \n MSE: %d', hidden(i), MSE(epoch));
+    title(rubrik);
+%backprop(patterns, targets, eta, epoch,hidden(i), 2, alpha);
+
+%make verify patterns and target
+
+%{
+mesh(verifyX, verifyY, zv);
+[x_len, ~]= size(verifyX);
+[y_len, ~]= size(verifyY);
+ndata = x_len*y_len;
+
+targets = reshape (z, 1, ndata);
+[xx, yy] = meshgrid (verifyX, verifyY);
+patterns = [reshape(xx, 1, ndata); reshape(yy, 1, ndata)];
+
+%verify
+[~, ndata] = size(targets);
+
+    hin = w * [patterns ; ones(1,ndata)];             %input to hidden layer
+    hout = [2 ./ (1+exp(-hin)) - 1 ; ones(1,ndata)];  %output from hidden layer
+    oin = v * hout;                                     %input to next layer
+    out = 2 ./ (1+exp(-oin)) - 1;                       %final output
+   result = heaviside(max((out)));
+
+%plot verification
+gridsize = x_len;
+    zz = reshape(out, gridsize, gridsize);
+    mesh(x,y,zz);
+    axis([-5 5 -5 5 -0.7 0.7]);
+    rubrik = sprintf('result: %d ', 23);
+    title(rubrik);
+%}
+%}

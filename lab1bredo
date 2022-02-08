@@ -1,0 +1,38 @@
+
+ndata = 100;
+nclasses = 2;
+mA = [ 1.0, 0.3]; sigmaA = 0.2;
+mB = [ 0.0, -0.1]; sigmaB = 0.3;
+classA(1,:) = [ randn(1,round(0.5*ndata)) .* sigmaA - mA(1), ...
+randn(1,round(0.5*ndata)) .* sigmaA + mA(1)];
+classA(2,:) = randn(1,ndata) .* sigmaA + mA(2);
+classB(1,:) = randn(1,ndata) .* sigmaB + mB(1);
+classB(2,:) = randn(1,ndata) .* sigmaB + mB(2);
+
+patterns = [classA, classB];                        % X (input patterns)
+classA_targets = zeros(1,ndata) + 1;    
+classB_targets = zeros(1,ndata) - 1;
+targets = [classA_targets,classB_targets];          % targets (without bias)
+
+w = randn(Nhidden, nclasses+1);                     %hidden layer nodes
+v = randn(nclasses, Nhidden);                       %output layer nodes
+
+dw = zeros(size(w));                                %delta hidden layer weights
+dv = zeros(size(v));                                %delta output layer weights
+
+hin = w * [patterns ; ones(1,ndata)];               %input to hidden layer
+hout = [2 ./ (1+exp(-hin)) - 1 ; ones(1,ndata)];    %output from hidden layer
+oin = v * hout;                                     %input to next layer
+out = 2 ./ (1+exp(-oin)) - 1;                       %final output
+
+%calculate deltas backwards
+delta_o = (out - targets) .* ((1 + out) .* (1 - out)) * 0.5;        % delta output layer
+delta_h = (v' * delta_o) .* ((1 + hout) .* (1 - hout)) * 0.5;       % delta hidden layer
+delta_h = delta_h(1:Nhidden, :);                                    %remove bias from delta hidden layer (WHY???)
+
+%apply delta, first to hidden then to output
+dw = (dw .* alpha) - (delta_h * pat') .* (1-alpha);                 
+dv = (dv .* alpha) - (delta_o * hout') .* (1-alpha);
+
+W = w + dw .* eta;
+V = v + dv .* eta;

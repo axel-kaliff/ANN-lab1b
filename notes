@@ -1,0 +1,48 @@
+#TODO
+x randomize sample selection every epoch
+x experiment with different NHidden
+- how many nodes do you need to perfectly separate all available data?
+
+- samla data om verify vs training error vid olika ratios
+- samla data om verify vs training error vid olika antal gömda noder
+-
+###########
+It seems that one (decision boundary) or two plots (inclusing learning curves)
+should suffice. Build a story around the questions in the assignment. Include
+concise motivation for your findings and potential interpretations/speculations
+
+. kolla om du kan göra decision boundary
+
+#How do the learning/error curves for training and validation sets
+#compare? Are they similar? When do you observe more dissimilarity?
+
+The difference in training error and validation error can be very big depending on the ratio between the training and validation set.
+
+When they are similar:
+
+When they are not:
+
+The explenation for this boils down to overfitting and underfitting. When the training data does
+
+We saw the best performance in validation when we trained the least. This observation indicates that our neural network is overfitting during the training. Our first thought was that this could be the result of us iterating the training through too many epochs, but reducing the number of epochs by a factor of 10 only diminishes verification performance.
+
+#How do these curves and the network performance depend on the size
+#of the hidden layer in various training/validation data configurations
+#(the aforementioned subsampling options)?
+
+
+
+#Is there any difference between a batch and sequential learning ap-
+#proach in terms of the validation performance?
+
+#Make an attempt at approximating the resulting decision boundary,
+#i.e. where the network output is 0 (between the target labels of -1
+and 1 for two classes, respectively).
+
+###########
+This subsection requires plots to reflect intuitive visual interpretation of the re-
+sults. Make sure that you condense information and avoid any excessive plot-
+ting. Here you might also need to incorporate some illustration of the network’s
+generalisation performance or use a table to systematically report the results
+requested in the assignment.
+
